@@ -9,12 +9,16 @@ The Instacart Market Basket Analysis was a competition hosted on [Kaggle](https:
 
 My approach was feature engineering (feature_engineering.py), followed by various models including GBM, MLP, and lightGBM (analysis.ipynb).
 
-The feature engineering script takes the data files provided by the competition and generates a set of predictive variables for each unique user-product pair in the prior orders (those before the train/test order). The data dictionary (also available as an Excel workbook) is as follows: 
+The feature engineering script takes the data files provided by the competition and generates a set of predictive variables for each unique user-product pair in the prior orders (those before the train/test order). The target for each unique user-product pair where the user is in the training set is 1 if the user orders the product in their train order (most recent order in the dataset), and 0 if the user does not. The target for each unique user-product pair where the user is in the test set is unknown, though designated as 2 in the files. 
+
+
+The data dictionary (also available as an Excel workbook) is as follows: 
 
 |Attribute	| Level	| Description	|Type |
 |-----:|-----:|:-----|:-----|
 |product_id|1|Unique row identifier|||
 |user_id|1|Unique row identifier|||
+|order_id|1|Used for grouping predictions in test set|||
 |target|1|That which we are predicting (whether the product appeared in the user's most recent order or not)|Category|
 |avg_days_between_order|2 - User|The average number of days between the user's orders|Continuous|
 |avg_order_size|2 - User|The average number of products in all the user's orders|Continuous|
@@ -61,7 +65,7 @@ Download feature_engineering.py, and place in a folder with the following files:
 2. order_products__train.csv
 3. order_products__prior.csv
 
-These can be found and downloaded from the [Kaggle competition page](https://www.kaggle.com/c/instacart-market-basket-analysis/data "Kaggle's Instacart Market Basket Analysis") as of 12/11/17. In accordance with competition rules, no datasets are included in this repository.
+These can be found and downloaded from the [Kaggle competition page](https://www.kaggle.com/c/instacart-market-basket-analysis/data "Data from Instacart Market Basket Analysis") as of 12/11/17. In accordance with competition rules, no datasets are included in this repository.
 
 Execute the script, and allow for 6-7 hours of runtime. The script saves intermediate steps, and can be terminated and restarted in the middle with minimal loss of progress.
 
@@ -82,7 +86,7 @@ Both scripts require Python, relying primarily on the pandas library. The analys
 
 Credits
 ======
-1. Thanks to Akulov Yaroslav's [Kaggle discussion post](https://www.kaggle.com/c/instacart-market-basket-analysis/discussion/38112) detailing his feature engineering approach.
+1. Thanks to Akulov Yaroslav's [Kaggle discussion post](https://www.kaggle.com/c/instacart-market-basket-analysis/discussion/38112 "Kaggle's Instacart discussion post #38112") detailing his feature engineering approach.
 2. Part of this approach was used in a group project for MIS 382N in the Fall of 2017, but all code contained herein is my own independent work.
 
 License
