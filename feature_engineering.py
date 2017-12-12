@@ -403,7 +403,7 @@ def last_merges():
 	
 	#select relevant columns
 
-	final = final[['user_id', 'product_id', 'target',
+	final = final[['user_id', 'order_id', 'product_id', 'target',
 	'aisle_id',
 	'department_id',
 	'avg_days_between_orders',
