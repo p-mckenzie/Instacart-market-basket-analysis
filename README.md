@@ -65,7 +65,7 @@ Download feature_engineering.py, and place in a folder with the following files:
 2. order_products__train.csv
 3. order_products__prior.csv
 
-These can be found and downloaded from the [Kaggle competition page](https://www.kaggle.com/c/instacart-market-basket-analysis/data "Data from Instacart Market Basket Analysis") as of 12/11/17. In accordance with competition rules, no datasets are included in this repository.
+These can be found and downloaded from the [Kaggle competition page](https://www.kaggle.com/c/instacart-market-basket-analysis/data "Data from Instacart Market Basket Analysis"). In accordance with competition rules, no datasets are included in this repository.
 
 Execute the script, and allow for 6-7 hours of runtime. The script saves intermediate steps, and can be terminated and restarted in the middle with minimal loss of progress.
 
