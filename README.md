@@ -2,7 +2,7 @@
 
 A feature engineering approach by Paige McKenzie.
 
-See my [blog post](https://p-mckenzie.github.io/2017/12/12/instacart-part-2/ \"Instacart Part 2 - Modeling\") concerning this project.
+See my [blog post](https://p-mckenzie.github.io/2017/12/12/instacart-part-2/ "Instacart Part 2 - Modeling") concerning this project.
 
 Overview
 ======
