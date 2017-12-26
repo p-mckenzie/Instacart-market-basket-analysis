@@ -190,7 +190,7 @@ def generate_new_df():
 	new = new.append(unique, ignore_index=True)
 
 	#select a few relevant columns and re-arrange
-	new = new[['order_id', 'product_id', 'user_id', 'order_number', 'add_to_cart_order', 'reordered', 'days_since_prior_order', 'eval_set', 'order_dow', 'order_hour_of_day']]
+	new = new[['order_id', 'product_id', 'user_id', 'order_number', 'add_to_cart_order', 'reordered', 'days_since_prior_order', 'eval_set']]
 
 	#self-join to get each user's maximum number of orders (including the train/test orders)
 	new = new.join(new.groupby('user_id')['order_number'].max(), on='user_id', how='left', rsuffix='_max')
@@ -313,16 +313,23 @@ def last_merges():
 	
 	new.sort_values(['target', 'order_number'], ascending=[False, False], inplace=True)
 
+	# create class, based on the hour of day
+	new['time_period'] = 'afternoon'
+	new.loc[new['order_hour_of_day']<=12, 'time_period'] = 'morning'
+	new.loc[new['order_hour_of_day']<=4, 'time_period'] = 'late'
+	new.loc[new['order_hour_of_day'] >=19, 'time_period'] = 'late'
+	
 	#Drop duplicate user_id, product_id pairs to get the necessary number of X sets (rows)
 	final = new.groupby(['user_id', 'product_id']).first().reset_index()
-
+	
 	# drop all entries in 'new' from the train set (no peeking at the future!)
 	new = new[new['eval_set']=='prior']
-
-	#get user-based values, reordered average and jaccard similarity index
-	user_only = pd.DataFrame(new.groupby('user_id')['reordered'].mean()).reset_index()
-	#user_only['jacc'] = user_only['user_id'].map(get_jaccard_index)
-	user_only.columns = ['user_id', 'reordered_usr_avg']#,'user_jacc']
+	
+	#get user-based values, reordered average and most recent order size
+	user_only = pd.DataFrame(new.groupby('user_id')['reordered'].mean())
+	user_only['prev_ord_size'] = new[['user_id', 'order_number', 'ord_size']].drop_duplicates().sort_values('order_number', ascending=False).groupby('user_id').first()['ord_size']
+	user_only.columns = ['reordered_usr_avg', 'prev_ord_size']
+	user_only.reset_index(inplace=True)
 	
 	final = final.merge(user_only, on='user_id', how='left')
 	del user_only
@@ -394,30 +401,22 @@ def last_merges():
 	final['prod_aisle_ratio'] = final['prod_aisle_ratio'].round(3)
 	final['prod_dept_ratio'] = final['prod_dept_ratio'].round(3)
 	
-	#get 'organic' flag
-	products = pd.read_csv('products.csv')
-	products['organic'] = products['product_name'].apply(is_organic)
+	final['tod_lift'] = final['tod_lift'].round(3)
+	final['dow_lift'] = final['dow_lift'].round(3)
 
-	final = final.merge(products[['product_id', 'organic']], how='left', on='product_id')
-	del products
-	
 	#select relevant columns
 
 	final = final[['user_id', 'order_id', 'product_id', 'target',
-	'aisle_id',
-	'department_id',
-	'avg_days_between_orders',
 	'avg_order_size',
+	'prev_ord_size',
+	'avg_days_between_orders',
 	'num_orders_placed',
 	'reordered_usr_avg',
-	'organic',
 	'overall_avg_prod_disp',
 	'overall_avg_aisle_disp',
 	'perc_aisle_support',
 	'overall_avg_dept_disp',
 	'perc_dept_support',
-	'order_dow',
-	'order_hour_of_day',
 	'avg_ord_pos',
 	'days_since_aisle',
 	'days_since_department',

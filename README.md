@@ -2,6 +2,7 @@
 
 A feature engineering approach by Paige McKenzie.
 
+See my [blog post](https://p-mckenzie.github.io/2017/12/12/instacart-part-2/ \"Instacart Part 2 - Modeling\") concerning this project.
 
 Overview
 ======
@@ -14,46 +15,42 @@ The feature engineering script takes the data files provided by the competition 
 
 The data dictionary (also available as an Excel workbook) is as follows: 
 
-|Attribute	| Level	| Description	|Type |
-|-----:|-----:|:-----|:-----|
-|product_id|1|Unique row identifier|||
-|user_id|1|Unique row identifier|||
-|order_id|1|Used for grouping predictions in test set|||
-|target|1|That which we are predicting (whether the product appeared in the user's most recent order or not)|Category|
-|avg_days_between_order|2 - User|The average number of days between the user's orders|Continuous|
-|avg_order_size|2 - User|The average number of products in all the user's orders|Continuous|
-|reordered_usr_avg|2 - User|The average of 'reordered' across all of the user's entries in the dataset|Continuous|
-|num_orders_placed|2 - Use|The number of orders the user has placed|Continuous|
-|aisle_id|3 - Product|The aisle the product is in|Category|
-|department_id|3 - Product|The department the product is in|Category|
-|organic|3 - Product|Whether the product's name indicates it is organic (1 if true)|Category|
-|overall_avg_prod_disp|3 - Product|Average of usr_avg_prod_disp, across all users|Continuous|
-|overall_avg_aisle_disp|4 - Aisle|Average of usr_avg_aisle_disp, across all users|Continuous|
-|perc_aisle_support|4a - User/aisle|The percentage of the user's orders which have something from the aisle|Continuous|
-|overall_avg_dept_disp|5 - Department|Average of usr_avg_dept_disp, across all users|Continuous|
-|perc_dept_support|5a - User/dept|The percentage of the user's orders which have something from the department|Continuous|
-|order_dow|6 - Order|The day of week the order was placed|Category|
-|order_hour_of_day|6 - Order|The hour of day the order was placed|Category|
-|perc_prod_support|7 - User/product|The percentage of the user's orders which contain the product|Continuous|
-|avg_ord_pos|7 - User/product|average position of the product in the user's orders (normalized)|Continuous|
-|days_since_aisle|7 - User/product|Number of days since the user has ordered from the product's aisle|Continuous|
-|days_since_department|7 - User/product|Number of days since the user has ordered from the product's department|Continuous|
-|days_since_prod|7 - User/product|Number of days since the user has ordered the product|Continuous|
-|order_aisle_displacement|7 - User/product|Number of orders between the user placing an order from the aisle and the user ordering the product|Continuous|
-|orders_since_prod|7 - User/product|Number of orders since the user last ordered the product|Continuous|
-|prod_aisle_ratio|7 - User/product|ratio of how many orders had the product/how many orders had the aisle|Continuous|
-|prod_dept_ratio|7 - User/product|ratio of how many orders had the product/how many orders had the department|Continuous|
-|usr_avg_aisle_disp|7 - User/product|average number of days between the user ordering items from the product's aisle|Continuous|
-|usr_avg_dept_disp|7 - User/product|average number of days between the user ordering items from the product's department|Continuous|
-|usr_avg_prod_disp|7 - User/product|average number of days between the user ordering the product|Continuous|
-|streak_length|7 - User/product|The number of consecutive orders (from most recent) the user has placed, which contain the product|Continuous|
-|prod_due_overall_perc|7 - User/product|days_since_prod/overall_avg_prod_disp|Continuous|
-|prod_due_user_perc|7 - User/product|days_since_prod/usr_avg_prod_disp|Continuous|
-|aisle_due_overall_perc|7 - User/product|days_since_aisle/overall_avg_prod_disp|Continuous|
-|aisle_due_user_perc|7 - User/product|days_since_aisle/usr_avg_prod_disp|Continuous|
-|dept_due_overall_perc|7 - User/product|days_since_department/overall_avg_prod_disp|Continuous|
-|dept_due_user_perc|7 - User/product|days_since_department/usr_avg_prod_disp|Continuous|
-
+|Attribute	|  Description	|
+|-----:|:-----|
+|product_id|Unique row identifier|
+|user_id|Unique row identifier|
+|order_id|Used for grouping predictions in test set|
+|target|That which we are predicting (whether the product appeared in the user's most recent order or not)|
+|avg_order_size|The average number of products in all the user's orders|
+|prev_ord_size|The number of products in the user's previous order|
+|avg_days_between_order|The average number of days between the user's orders|
+|reordered_usr_avg|The average of 'reordered' across all of the user's entries in the dataset|
+|num_orders_placed|The number of orders the user has placed|
+|overall_avg_prod_disp|Average of usr_avg_prod_disp, across all users|
+|overall_avg_aisle_disp|Average of usr_avg_aisle_disp, across all users|
+|perc_aisle_support|The percentage of the user's orders which have something from the aisle|
+|overall_avg_dept_disp|Average of usr_avg_dept_disp, across all users|
+|perc_dept_support|The percentage of the user's orders which have something from the department|
+|perc_prod_support|The percentage of the user's orders which contain the product|
+|avg_ord_pos|average position of the product in the user's orders (normalized)|
+|days_since_aisle|Number of days since the user has ordered from the product's aisle|
+|days_since_department|Number of days since the user has ordered from the product's department|
+|days_since_prod|Number of days since the user has ordered the product|
+|order_aisle_displacement|Number of orders between the user placing an order from the aisle and the user ordering the product|
+|orders_since_prod|Number of orders since the user last ordered the product|
+|prod_aisle_ratio|ratio of how many orders had the product/how many orders had the aisle|
+|prod_dept_ratio|ratio of how many orders had the product/how many orders had the department|
+|usr_avg_aisle_disp|average number of days between the user ordering items from the product's aisle|
+|usr_avg_dept_disp|average number of days between the user ordering items from the product's department|
+|usr_avg_prod_disp|average number of days between the user ordering the product|
+|streak_length|The number of consecutive orders (from most recent) the user has placed, which contain the product|
+|prod_due_overall_perc|days_since_prod/overall_avg_prod_disp|
+|prod_due_user_perc|days_since_prod/usr_avg_prod_disp|
+|aisle_due_overall_perc|days_since_aisle/overall_avg_prod_disp|
+|aisle_due_user_perc|days_since_aisle/usr_avg_prod_disp|
+|dept_due_overall_perc|days_since_department/overall_avg_prod_disp|
+|dept_due_user_perc|days_since_department/usr_avg_prod_disp|
+|reorder_custom|Whether the product had been in the user's most recent order|
 
 
 Usage
@@ -65,7 +62,7 @@ Download feature_engineering.py, and place in a folder with the following files:
 2. order_products__train.csv
 3. order_products__prior.csv
 
-These can be found and downloaded from the [Kaggle competition page](https://www.kaggle.com/c/instacart-market-basket-analysis/data "Data from Instacart Market Basket Analysis"). In accordance with competition rules, no datasets are included in this repository.
+These can be found and downloaded from the [Kaggle competition page](https://www.kaggle.com/c/instacart-market-basket-analysis/data "Data from Instacart Market Basket Analysis") as of 12/11/17. In accordance with competition rules, no datasets are included in this repository.
 
 Execute the script, and allow for 6-7 hours of runtime. The script saves intermediate steps, and can be terminated and restarted in the middle with minimal loss of progress.
 
